@@ -43,18 +43,19 @@ def load_LLM(openai_api_key):
     return llm
 
 st.set_page_config(page_title="冠和权邮件优化系统", page_icon=":book:")
-st.header("Globalize Text")
+st.header("冠和权英文邮件润色系统")
 
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("Often professionals would like to improve their emails, but don't have the skills to do so. \n\n This tool \
-                will help you improve your email skills by converting your emails into a more professional format. This tool \
-                is powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) and made by \
-                [@GregKamradt](https://twitter.com/GregKamradt). \n\n View Source Code on [Github](https://github.com/gkamradt/globalize-text-streamlit/blob/main/main.py)")
+    st.markdown("通常，流程人员希望改进他们的英文电子邮件，但没有这样做的技能。 \n\n 
+                 这个工具将英文邮件转换为更专业的格式，帮助您提高电子邮件技能。 \n\n
+                 这个工具由北京冠和权律师事务所和chatGPT提供支持，并由其IT和流程团队制作")
 
+# with col2:
+#    st.image(image='TweetScreenshot.png', width=500, caption='https://twitter.com/DannyRichman/status/1598254671591723008')
 with col2:
-    st.image(image='TweetScreenshot.png', width=500, caption='https://twitter.com/DannyRichman/status/1598254671591723008')
+    st.image(image='englishemail.png', width=500)
 
 st.markdown("## Enter Your Email To Convert")
 
