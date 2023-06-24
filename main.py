@@ -48,8 +48,7 @@ st.header("冠和权英文邮件润色系统")
 col1, col2 = st.columns(2)
 
 with col1:
-        st.markdown("** 借助本工具，涉外工作人员可以随意撰写英文邮件，本工具会为你润色，达到专业水平。\n\n
-                使用过程中如果有问题，可以通过邮件联系开发人员[@Jack](jack@crownandrights.com). ")
+        st.markdown("** 借助本工具，涉外工作人员可以随意撰写英文邮件，本工具会为你润色，达到专业水平。使用过程中如果有问题，可以通过邮件联系开发人员[@Jack](jack@crownandrights.com). ")
  
 
 # with col2:
