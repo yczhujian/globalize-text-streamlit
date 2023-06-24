@@ -65,7 +65,7 @@ def get_api_key():
 openai_api_key = get_api_key()
 #openai_api_key = str(st.secrets["OPENAI_API_KEY"])
 st.write(st.secrets["OPENAI_API_KEY"])
-st.write(st.secrets["ABC"])
+#st.write(st.secrets["ABC"])
 
 col1, col2 = st.columns(2)
 with col1:
