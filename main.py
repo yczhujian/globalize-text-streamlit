@@ -45,6 +45,8 @@ def load_LLM(openai_api_key):
 st.set_page_config(page_title="冠和权邮件优化系统", page_icon=":book:")
 st.header("冠和权英文邮件润色系统")
 
+st.write("@版权归北京冠和权律师事务所所有")
+
 col1, col2 = st.columns(2)
 
 with col1:
@@ -110,4 +112,3 @@ if email_input:
 
     st.write(formatted_email)
 
-st.write("@版权归北京冠和权律师事务所所有")
