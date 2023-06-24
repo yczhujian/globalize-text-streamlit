@@ -48,9 +48,11 @@ st.header("冠和权英文邮件润色系统")
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("通常，流程人员希望改进他们的英文电子邮件，但没有这样做的技能。 \n\n 
-                 这个工具将英文邮件转换为更专业的格式，帮助您提高电子邮件技能。 \n\n
-                 这个工具由北京冠和权律师事务所和chatGPT提供支持，并由其IT和流程团队制作")
+        st.markdown("由于自身英语水平受限，很多人的英文邮件写得不太专利. \n\n 这个工具 \
+                将帮助你润色自己的英文邮件. \n\n 在这个工具的帮助下， \
+                你可以随意撰写英文邮件，这个工具可以帮你润色至专业水准。 \n\n
+                使用过程中如果有问题，可以通过邮件联系开发人员[@Jack](jack@crownandrights.com). ")
+ 
 
 # with col2:
 #    st.image(image='TweetScreenshot.png', width=500, caption='https://twitter.com/DannyRichman/status/1598254671591723008')
