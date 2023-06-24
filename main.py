@@ -56,7 +56,7 @@ with col1:
 with col2:
     st.image(image='englishemail.png', width=500)
 
-st.markdown("## Enter Your Email To Convert")
+st.markdown("## 请输入您的英文邮件草稿")
 
 def get_api_key():
     input_text = st.text_input(label="OpenAI API Key ",  placeholder="Ex: sk-2twmA8tfCb8un4...", key="openai_api_key_input")
@@ -71,12 +71,12 @@ openai_api_key = st.secrets["OPENAI_API_KEY"]
 col1, col2 = st.columns(2)
 with col1:
     option_tone = st.selectbox(
-        'Which tone would you like your email to have?',
+        '邮件类型?',
         ('Formal', 'Informal'))
     
 with col2:
     option_dialect = st.selectbox(
-        'Which English Dialect would you like?',
+        '英式英语还是美式英语?',
         ('American', 'British'))
 
 def get_text():
@@ -95,7 +95,7 @@ def update_text_with_example():
 
 st.button("*See An Example*", type='secondary', help="Click to see an example of the email you will be converting.", on_click=update_text_with_example)
 
-st.markdown("### Your Converted Email:")
+st.markdown("### 润色后的英文邮件:")
 
 if email_input:
     if not openai_api_key:
