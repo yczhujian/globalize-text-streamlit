@@ -42,7 +42,7 @@ def load_LLM(openai_api_key):
     llm = OpenAI(temperature=.7, openai_api_key=openai_api_key)
     return llm
 
-st.set_page_config(page_title="Globalize Email", page_icon=":robot:")
+st.set_page_config(page_title="冠和权邮件优化系统", page_icon=":book:")
 st.header("Globalize Text")
 
 col1, col2 = st.columns(2)
