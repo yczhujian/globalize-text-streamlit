@@ -93,7 +93,7 @@ def update_text_with_example():
     print ("in updated")
     st.session_state.email_input = "Sally I am starts work at yours monday from dave"
 
-st.button("*See An Example*", type='secondary', help="Click to see an example of the email you will be converting.", on_click=update_text_with_example)
+st.button("*查看示例邮件*", type='secondary', help="Click to see an example of the email you will be converting.", on_click=update_text_with_example)
 
 st.markdown("### 润色后的英文邮件:")
 
@@ -109,3 +109,5 @@ if email_input:
     formatted_email = llm(prompt_with_email)
 
     st.write(formatted_email)
+
+st.write("@版权归北京冠和权律师事务所所有")
