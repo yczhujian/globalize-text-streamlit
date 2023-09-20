@@ -8,38 +8,36 @@ from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 
 template = """
-    I want you to be an excellent Chinese patent attorney, \
-    you have an undergraduate degree in engineering and a doctoral degree in law. \
-    With over 20 years of practice, you've drafted more than 3,000 invention patents and 2,000 utility model patents. \
+    I want you to be a top American patent attorney, \
+    and you have both engineering and legal doctor degrees. \
     Based on the following description and any material you can gather, \
-    please draft the first {patent} patent claim with more than 500 words in the language of {language} . please double check whether there is only one claim! \
-    Ensure that the patent office examiner will not reject this new patent due to lack of novelty, inventiveness, or missing essential technical features. please double check.\
-    Please think step by step and write down the technical features of the invention. \
-    The description contains many technical features selected from different patents, please combine them into a new patent and make the new patent totally defferent from the original ones. \
+    please draft the first claim with more than 500 words in {language} for a {language} {patent} patent. please double check whether there is only one claim! \
+    Ensure that the {language} patent office examiner will not reject this new patent due to lack of novelty, inventiveness, or missing essential technical features. please double check.\
+    Please think step by step and write down the Claim 1. 
     
-    **
-    Here is two examples of the patent claim:
-    
-    
-1. A method implemented by a network node in a Bit Index Explicit Replication Traffic Engineering (BIER-TE) domain, comprising:
-generating a fast reroute bit index forwarding table (FRR-BIFT) containing a backup path from the network node to each next hop of a neighbor node of the network node, wherein the backup path is represented by one or more bit positions for adjacencies along the backup path; and
-sending a packet to the next hop of the neighbor node in accordance with the backup path of the FRR-BIFT when the neighbor node has failed.
-
-1. A method of fabricating a three-dimensional (3D) NAND memory structure, comprising:
-forming a memory hole in a semiconductor structure including a plurality of stacked layers, the memory hole having a depth to diameter aspect-ratio of at least 25:1; and
-forming a dielectric on sidewalls of the memory hole having a cross-section profile where a first thickness of the dielectric proximate to a bottom of the memory hole is greater than or equal to a second thickness of the dielectric in at least one portion of memory hole above the bottom of the memory hole.
-    
-    **
-    
-    The description is as follows:{abstract}
-    
+    The description is as follows:{abstract} 
     
 """
+
+template_2nd = """
+    I want you to be an American patent attorney, and you have both engineering and legal doctor degrees. \
+    Please redraft the following with more than 500 words to be more complicated to have higher sucess rate for grant for an invention patent in {language}:
+    
+    {first_response}
+
+"""
+
 
 prompt = PromptTemplate(
     input_variables=["patent", "language", "abstract"],
     template=template,
 )
+
+prompt_2nd = PromptTemplate(
+    input_variables=["language","first_response"],
+    template=template_2nd,
+)
+
 
 # llm = OpenAI(temperature=.7, openai_api_key=st.secrets['OPENAI_API_KEY'], openai_api_base=st.secrets['OPENAI_API_BASE'])
 llm = OpenAI(temperature=.7, openai_api_key=st.secrets['OPENAI_API_KEY'])
@@ -152,8 +150,14 @@ with tab1:
    if st.button("Draft Patent Claim", type="primary", key="tab_button"):
         if tab_abstract:
             prompt_with_abstract = prompt.format(patent=tab_patent, language=tab_language, abstract=tab_abstract)
-            abstract_drafted = llm(prompt_with_abstract)
-            st.info(abstract_drafted)
+            response_1st = llm(prompt_with_abstract)
+            st.subheader("First draft:")
+            st.info(response_1st)
+            
+            prompt_with_abstract_2nd = prompt_2nd.format(language=tab_language, first_response=response_1st)
+            response_2nd = llm(prompt_with_abstract_2nd)
+            st.subheader("final draft:")
+            st.info(response_2nd)
         else:
             st.write("Please enter a description. The maximum length is 700 words.")
             st.stop()
