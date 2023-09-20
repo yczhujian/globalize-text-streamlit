@@ -2,109 +2,173 @@ import streamlit as st
 from langchain import PromptTemplate
 from langchain.llms import OpenAI
 
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import Chroma
+from langchain.chains import RetrievalQA
+
 template = """
-    Below is an email that may be poorly worded.
-    Your goal is to:
-    - Properly format the email
-    - Convert the input text to a specified tone
-    - Convert the input text to a specified dialect
-
-    Here are some examples different Tones:
-    - Formal: We went to Barcelona for the weekend. We have a lot of things to tell you.
-    - Informal: Went to Barcelona for the weekend. Lots to tell you.  
-
-    Here are some examples of words in different dialects:
-    - American: French Fries, cotton candy, apartment, garbage, cookie, green thumb, parking lot, pants, windshield
-    - British: chips, candyfloss, flag, rubbish, biscuit, green fingers, car park, trousers, windscreen
-
-    Example Sentences from each dialect:
-    - American: I headed straight for the produce section to grab some fresh vegetables, like bell peppers and zucchini. After that, I made my way to the meat department to pick up some chicken breasts.
-    - British: Well, I popped down to the local shop just the other day to pick up a few bits and bobs. As I was perusing the aisles, I noticed that they were fresh out of biscuits, which was a bit of a disappointment, as I do love a good cuppa with a biscuit or two.
-
-    Please start the email with a warm introduction. Add the introduction if you need to.
+    I want you to be an excellent Chinese patent attorney, \
+    you have an undergraduate degree in engineering and a doctoral degree in law. \
+    With over 20 years of practice, you've drafted more than 3,000 invention patents and 2,000 utility model patents. \
+    Based on the following description and any material you can gather, \
+    please draft the first {patent} patent claim with more than 500 words in the language of {language} . please double check whether there is only one claim! \
+    Ensure that the patent office examiner will not reject this new patent due to lack of novelty, inventiveness, or missing essential technical features. please double check.\
+    Please think step by step and write down the technical features of the invention. \
+    The description contains many technical features selected from different patents, please combine them into a new patent and make the new patent totally defferent from the original ones. \
     
-    Below is the email, tone, and dialect:
-    TONE: {tone}
-    DIALECT: {dialect}
-    EMAIL: {email}
+    **
+    Here is two examples of the patent claim:
     
-    YOUR {dialect} RESPONSE:
+    
+1. A method implemented by a network node in a Bit Index Explicit Replication Traffic Engineering (BIER-TE) domain, comprising:
+generating a fast reroute bit index forwarding table (FRR-BIFT) containing a backup path from the network node to each next hop of a neighbor node of the network node, wherein the backup path is represented by one or more bit positions for adjacencies along the backup path; and
+sending a packet to the next hop of the neighbor node in accordance with the backup path of the FRR-BIFT when the neighbor node has failed.
+
+1. A method of fabricating a three-dimensional (3D) NAND memory structure, comprising:
+forming a memory hole in a semiconductor structure including a plurality of stacked layers, the memory hole having a depth to diameter aspect-ratio of at least 25:1; and
+forming a dielectric on sidewalls of the memory hole having a cross-section profile where a first thickness of the dielectric proximate to a bottom of the memory hole is greater than or equal to a second thickness of the dielectric in at least one portion of memory hole above the bottom of the memory hole.
+    
+    **
+    
+    The description is as follows:{abstract}
+    
+    
 """
 
 prompt = PromptTemplate(
-    input_variables=["tone", "dialect", "email"],
+    input_variables=["patent", "language", "abstract"],
     template=template,
 )
 
-def load_LLM(openai_api_key):
-    """Logic for loading the chain you want to use should go here."""
-    # Make sure your openai_api_key is set as an environment variable
-    llm = OpenAI(temperature=.7, openai_api_key=openai_api_key)
-    return llm
+# llm = OpenAI(temperature=.7, openai_api_key=st.secrets['OPENAI_API_KEY'], openai_api_base=st.secrets['OPENAI_API_BASE'])
+llm = OpenAI(temperature=.7, openai_api_key=st.secrets['OPENAI_API_KEY'])
 
-st.set_page_config(page_title="冠和权邮件优化系统", page_icon=":book:")
-st.header("Globalize Text")
+openai_api_key=st.secrets['OPENAI_API_KEY']
+
+st.set_page_config(page_title="R&D Assistant", page_icon=":book:")
+st.header(":orange[R&D] Assistant System :book: :book:", divider='rainbow')
+st.write("  ")
 
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("Often professionals would like to improve their emails, but don't have the skills to do so. \n\n This tool \
-                will help you improve your email skills by converting your emails into a more professional format. This tool \
-                is powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) and made by \
-                [@GregKamradt](https://twitter.com/GregKamradt). \n\n View Source Code on [Github](https://github.com/gkamradt/globalize-text-streamlit/blob/main/main.py)")
+    st.markdown("""
+      > Note：
+      >  
+      > Many R&D engineers conduct research and development based on the traditional brainstorming method, spending a lot of energy, but still the results are not good. 
+      > The current R&D assistance tool combines more than 10 years of senior patent lawyers' experiences and AI intelligence. 
+      > 
+      > Any further queries, please just drop me a line：<1047534116@qq.com>
+    """)
 
 with col2:
-    st.image(image='TweetScreenshot.png', width=500, caption='https://twitter.com/DannyRichman/status/1598254671591723008')
+    st.image(image='fourpatents.jpg', width=300, caption='The patent system added the fuel of interest to the fire of genius')
 
-st.markdown("## Enter Your Email To Convert")
-
-def get_api_key():
-    input_text = st.text_input(label="OpenAI API Key ",  placeholder="Ex: sk-2twmA8tfCb8un4...", key="openai_api_key_input")
-    return input_text
-
-openai_api_key = get_api_key()
-#openai_api_key = str(st.secrets["OPENAI_API_KEY"])
-st.write(st.secrets["OPENAI_API_KEY"])
-st.write(st.secrets["ABC"])
+st.markdown("## Enter Your Requirements:")
 
 col1, col2 = st.columns(2)
 with col1:
-    option_tone = st.selectbox(
-        'Which tone would you like your email to have?',
-        ('Formal', 'Informal'))
+    option_patent = st.selectbox(
+        'Which patent would you like?',
+        ('Invention', 'Utility Model'))
     
 with col2:
-    option_dialect = st.selectbox(
-        'Which English Dialect would you like?',
-        ('American', 'British'))
+    option_language = st.selectbox(
+        'Which language would you like?',
+        ('American', 'British', 'French', 'German'))
 
-def get_text():
-    input_text = st.text_area(label="Email Input", label_visibility='collapsed', placeholder="Your Email...", key="email_input")
+def get_abstract():
+    input_text = st.text_area(label="Abstract", label_visibility='collapsed', placeholder="Your technical idea...", key="input_text")
     return input_text
 
-email_input = get_text()
+abstract_input = get_abstract()
 
-if len(email_input.split(" ")) > 700:
-    st.write("Please enter a shorter email. The maximum length is 700 words.")
+if len(abstract_input.split(" ")) > 700:
+    st.write("Please enter a shorter description. The maximum length is 700 words.")
     st.stop()
 
 def update_text_with_example():
-    print ("in updated")
-    st.session_state.email_input = "Sally I am starts work at yours monday from dave"
+    # print ("in drafted")
+    st.session_state.abstract_input = """This is a tool and method that helps spacecraft fly. 
+    It checks the engine's condition in real-time and adjusts the flight direction based on that info.
+    If there's an engine problem, this method helps the spacecraft fly more accurately to its destination.
+    """
+    
+# st.button("*See An Example*", type='secondary', help="Click to see an example.", on_click=update_text_with_example)
 
-st.button("*See An Example*", type='secondary', help="Click to see an example of the email you will be converting.", on_click=update_text_with_example)
+# st.markdown("### Your claims for the Patent:")
 
-st.markdown("### Your Converted Email:")
+# if abstract_input:
 
-if email_input:
-    if not openai_api_key:
-        st.warning('Please insert OpenAI API Key. Instructions [here](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key)', icon="⚠️")
+#     prompt_with_abstract = prompt.format(patent=option_patent, language=option_language, abstract=abstract_input)
+
+#     drafted_abstract = llm(prompt_with_abstract)
+
+#     st.info(drafted_abstract)
+
+
+if st.button("Draft Patent Claim", type="primary"):
+    if abstract_input:
+        prompt_with_abstract = prompt.format(patent=option_patent, language=option_language, abstract=abstract_input)
+        drafted_abstract = llm(prompt_with_abstract)
+        st.info(drafted_abstract)
+    else:
+        st.write("Please enter a description. The maximum length is 700 words.")
         st.stop()
 
-    llm = load_LLM(openai_api_key=openai_api_key)
 
-    prompt_with_email = prompt.format(tone=option_tone, dialect=option_dialect, email=email_input)
+st.divider()
 
-    formatted_email = llm(prompt_with_email)
+st.title("Patents Analysis around the World")    
+st.image(image='patents.png', width=700, caption='Patents Granted')
 
-    st.write(formatted_email)
+
+tab1, tab2, tab3 = st.tabs(["R&D from Title", "R&D from Description", "R&D from PDF"])
+
+with tab1:
+   st.header("R&D Ideas from Title")
+   col1, col2 = st.columns(2)
+   with col1:
+        tab_patent = st.selectbox(
+        'Which patent would you like?',
+        ('Invention', 'Utility Model'), key="tab_patent")
+    
+   with col2:
+        tab_language = st.selectbox(
+        'Which language would you like?',
+        ('American', 'British', 'French', 'German'),key="tab_language")
+
+   def get_abstract():
+        tab_text = st.text_area(label="Abstract", label_visibility='collapsed', placeholder="Your technical idea...", key="tab_text")
+        return tab_text
+
+   tab_abstract = get_abstract()
+
+   if len(tab_abstract.split(" ")) > 700:
+        st.write("Please enter a shorter description. The maximum length is 700 words.")
+        st.stop()
+    
+   if st.button("Draft Patent Claim", type="primary", key="tab_button"):
+        if tab_abstract:
+            prompt_with_abstract = prompt.format(patent=tab_patent, language=tab_language, abstract=tab_abstract)
+            abstract_drafted = llm(prompt_with_abstract)
+            st.info(abstract_drafted)
+        else:
+            st.write("Please enter a description. The maximum length is 700 words.")
+            st.stop()
+
+with tab2:
+   st.header("A dog")
+   st.image("https://static.streamlit.io/examples/dog.jpg", width=200)
+
+with tab3:
+   st.header("An owl")
+   uploaded_files = st.file_uploader("Choose a pdf file", accept_multiple_files=True)
+   for uploaded_file in uploaded_files:
+      bytes_data = uploaded_file.read()
+      st.write("filename:", uploaded_file.name)
+      st.write(bytes_data)
+
+
+
