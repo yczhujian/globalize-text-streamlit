@@ -5,9 +5,9 @@ import requests  # used to download images
 import os  # used to access filepaths
 from PIL import Image  # used to print and edit images
 
-# openai.api_key = "sk-IaWRzriZOsG34UszNXxHULWR73xYKLKqFXEWwpWhs1lkaOjx"
-openai.api_key = "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"
-# openai.api_base = "https://api.fe8.cn/v1"
+openai.api_key = "sk-IaWRzriZOsG34UszNXxHULWR73xYKLKqFXEWwpWhs1lkaOjx"
+# openai.api_key = "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"
+openai.api_base = "https://api.fe8.cn/v1"
 
 # set a directory to save DALL·E images to
 image_dir_name = "images"

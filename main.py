@@ -2,11 +2,6 @@ import streamlit as st
 from langchain import PromptTemplate
 from langchain.llms import OpenAI
 
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
-from langchain.chains import RetrievalQA
-
 template = """
     I want you to be a top American patent attorney, \
     and you have both engineering and legal doctor degrees. \
@@ -39,10 +34,11 @@ prompt_2nd = PromptTemplate(
 )
 
 
-# llm = OpenAI(temperature=.7, openai_api_key=st.secrets['OPENAI_API_KEY'], openai_api_base=st.secrets['OPENAI_API_BASE'])
-llm = OpenAI(temperature=.7, openai_api_key=st.secrets['OPENAI_API_KEY'])
+llm = OpenAI(temperature=0, openai_api_key=st.secrets['OPENAI_API_KEY'], openai_api_base=st.secrets['OPENAI_API_BASE'])
+# llm = OpenAI(temperature=0, openai_api_key=st.secrets['OPENAI_API_KEY'])
 
 openai_api_key=st.secrets['OPENAI_API_KEY']
+openai_api_base=st.secrets['OPENAI_API_BASE']
 
 st.set_page_config(page_title="R&D Assistant", page_icon=":book:")
 st.header(":orange[R&D] Assistant System :book: :book:", divider='rainbow')
